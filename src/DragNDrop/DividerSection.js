@@ -1,18 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
+import './DraggableUrl.css';
 import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
-  border: 1px solid lightgrey;
-  border-radius: 2px;
   padding: 8px;
   margin-bottom: 8px;
   background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
+
+  display: flex;
+  flex-direction: row;
 `;
 
-const Task = ({ task, index }) => {
+const DividerSection = ({ urlObj, index }) => {
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={urlObj.id} index={index} isDragDisabled={true}>
       {(provided, snapshot) => (
         <Container
           {...provided.draggableProps}
@@ -20,11 +22,11 @@ const Task = ({ task, index }) => {
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
         >
-          {task.content}
+          Hi
         </Container>
       )}
     </Draggable>
   );
 };
 
-export default Task;
+export default DividerSection;

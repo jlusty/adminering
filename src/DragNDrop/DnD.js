@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
-import Column from './column';
+import Column from './Column';
 
 const Container = styled.div`
   display: flex;
+  margin: 20px 20px;
 `;
 
 const DnD = () => {
@@ -30,13 +31,13 @@ const DnD = () => {
     const finish = data.columns[destination.droppableId];
 
     if (start === finish) {
-      const newTaskIds = Array.from(start.taskIds);
-      newTaskIds.splice(source.index, 1);
-      newTaskIds.splice(destination.index, 0, draggableId);
+      const newUrlIds = Array.from(start.urlIds);
+      newUrlIds.splice(source.index, 1);
+      newUrlIds.splice(destination.index, 0, draggableId);
 
       const newColumn = {
         ...start,
-        taskIds: newTaskIds,
+        urlIds: newUrlIds,
       };
 
       const newState = {
@@ -49,18 +50,18 @@ const DnD = () => {
     }
 
     // Moving from one list to another
-    const startTaskIds = Array.from(start.taskIds);
-    startTaskIds.splice(source.index, 1);
+    const startUrlIds = Array.from(start.urlIds);
+    startUrlIds.splice(source.index, 1);
     const newStart = {
       ...start,
-      taskIds: startTaskIds,
+      urlIds: startUrlIds,
     };
 
-    const finishTaskIds = Array.from(finish.taskIds);
-    finishTaskIds.splice(destination.index, 0, draggableId);
+    const finishUrlIds = Array.from(finish.urlIds);
+    finishUrlIds.splice(destination.index, 0, draggableId);
     const newFinish = {
       ...finish,
-      taskIds: finishTaskIds,
+      urlIds: finishUrlIds,
     };
 
     const newState = {
@@ -79,9 +80,9 @@ const DnD = () => {
       <Container>
         {data.columnOrder.map(columnId => {
           const column = data.columns[columnId];
-          const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
+          const urls = column.urlIds.map(urlId => data.urls[urlId]);
 
-          return <Column key={column.id} column={column} tasks={tasks} />;
+          return <Column key={column.id} column={column} urls={urls} />;
         })}
       </Container>
     </DragDropContext>
