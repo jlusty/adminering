@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 // import 'normalize.css';
 import styled from 'styled-components';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
-import Folder from './Folder';
 import FolderList from './FolderList';
 
 const Container = styled.div`
@@ -30,50 +29,47 @@ const DnD = () => {
       return;
     }
 
-    if (type === 'folder') {
-      const start = data.folderColumns[source.droppableId];
-      const finish = data.folderColumns[destination.droppableId];
+    function moveItem(parentType, childIds) {
+      const start = data[parentType][source.droppableId];
+      const finish = data[parentType][destination.droppableId];
 
       if (start === finish) {
-        const newFolderIds = Array.from(start.folderIds);
-        newFolderIds.splice(source.index, 1);
-        newFolderIds.splice(destination.index, 0, draggableId);
+        const newItemIds = Array.from(start[childIds]);
+        newItemIds.splice(source.index, 1);
+        newItemIds.splice(destination.index, 0, draggableId);
 
-        const newFolderColumn = {
+        const newItem = {
           ...start,
-          folderIds: newFolderIds,
+          [childIds]: newItemIds,
         };
 
         const newState = {
           ...data,
-          folderColumns: {
-            ...data.folderColumns,
-            [newFolderColumn.id]: newFolderColumn,
-          },
+          [parentType]: { ...data[parentType], [newItem.id]: newItem },
         };
         setData(newState);
         return;
       }
 
       // Moving from one list to another
-      const startFolderIds = Array.from(start.folderIds);
-      startFolderIds.splice(source.index, 1);
+      const startItemIds = Array.from(start[childIds]);
+      startItemIds.splice(source.index, 1);
       const newStart = {
         ...start,
-        folderIds: startFolderIds,
+        [childIds]: startItemIds,
       };
 
-      const finishFolderIds = Array.from(finish.folderIds);
-      finishFolderIds.splice(destination.index, 0, draggableId);
+      const finishItemIds = Array.from(finish[childIds]);
+      finishItemIds.splice(destination.index, 0, draggableId);
       const newFinish = {
         ...finish,
-        folderIds: finishFolderIds,
+        [childIds]: finishItemIds,
       };
 
       const newState = {
         ...data,
-        folderColumns: {
-          ...data.folderColumns,
+        [parentType]: {
+          ...data[parentType],
           [newStart.id]: newStart,
           [newFinish.id]: newFinish,
         },
@@ -83,59 +79,28 @@ const DnD = () => {
       return;
     }
 
-    const start = data.folders[source.droppableId];
-    const finish = data.folders[destination.droppableId];
-
-    if (start === finish) {
-      const newUrlIds = Array.from(start.urlIds);
-      newUrlIds.splice(source.index, 1);
-      newUrlIds.splice(destination.index, 0, draggableId);
-
-      const newFolder = {
-        ...start,
-        urlIds: newUrlIds,
-      };
-
-      const newState = {
-        ...data,
-        folders: { ...data.folders, [newFolder.id]: newFolder },
-      };
-
-      setData(newState);
+    if (type === 'folder') {
+      moveItem('folderColumns', 'folderIds');
       return;
     }
-
-    // Moving from one list to another
-    const startUrlIds = Array.from(start.urlIds);
-    startUrlIds.splice(source.index, 1);
-    const newStart = {
-      ...start,
-      urlIds: startUrlIds,
-    };
-
-    const finishUrlIds = Array.from(finish.urlIds);
-    finishUrlIds.splice(destination.index, 0, draggableId);
-    const newFinish = {
-      ...finish,
-      urlIds: finishUrlIds,
-    };
-
-    const newState = {
-      ...data,
-      folders: {
-        ...data.folders,
-        [newStart.id]: newStart,
-        [newFinish.id]: newFinish,
-      },
-    };
-    setData(newState);
+    moveItem('folders', 'urlIds');
   };
+
+  const { folderColumnsOrder } = data;
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Container>
-        <FolderList droppableId="folder-column-1" data={data} />
-        <FolderList droppableId="folder-column-2" data={data} />
+        {folderColumnsOrder.map(folderColumnId => (
+          <FolderList
+            key={folderColumnId}
+            folderColumn={data.folderColumns[folderColumnId]}
+            folders={data.folderColumns[folderColumnId].folderIds.map(
+              folderId => data.folders[folderId]
+            )}
+            allUrls={data.urls}
+          />
+        ))}
       </Container>
     </DragDropContext>
   );

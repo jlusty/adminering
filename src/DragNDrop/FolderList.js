@@ -9,43 +9,44 @@ const Container = styled.div`
   background-color: white;
   border-radius: 2px;
   width: 300px;
+  min-height: 100px;
 
   display: flex;
-  flex-direction: row;
+  flex-direction: ${props =>
+    props.direction === 'horizontal' ? 'row' : 'column'};
 `;
 const Title = styled.h3`
   margin: 0px;
   padding: 8px;
 `;
-const ItemList = styled.div`
-  padding: 8px;
-  background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
-  flex-grow: 1;
-  min-height: 30px;
-`;
 
-const FolderList = ({ droppableId, data }) => {
+const FolderList = ({ folderColumn, folders, allUrls }) => {
   return (
     <Container>
-      <Title>{droppableId}</Title>
-      <Droppable droppableId={droppableId} direction="horizontal" type="folder">
+      <Title>{folderColumn.id}</Title>
+      <Droppable
+        droppableId={folderColumn.id}
+        direction={folderColumn.direction}
+        type="folder"
+      >
         {provided => (
-          <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {data['folderColumns'][droppableId].folderIds.map(
-              (folderId, index) => {
-                const folder = data.folders[folderId];
-                const urls = folder.urlIds.map(urlId => data.urls[urlId]);
+          <Container
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            direction={folderColumn.direction}
+          >
+            {folders.map((folder, index) => {
+              const urls = folder.urlIds.map(urlId => allUrls[urlId]);
 
-                return (
-                  <Folder
-                    key={folder.id}
-                    folder={folder}
-                    urls={urls}
-                    index={index}
-                  />
-                );
-              }
-            )}
+              return (
+                <Folder
+                  key={folder.id}
+                  folder={folder}
+                  urls={urls}
+                  index={index}
+                />
+              );
+            })}
             {provided.placeholder}
           </Container>
         )}

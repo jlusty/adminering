@@ -48,7 +48,7 @@ const Folder = ({ folder, urls, index }) => {
           <Droppable droppableId={folder.id} type="url">
             {(provided, snapshot) =>
               isMinimised ? (
-                <></>
+                <div ref={provided.innerRef}></div>
               ) : (
                 <UrlList
                   ref={provided.innerRef}
