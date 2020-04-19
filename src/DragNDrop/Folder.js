@@ -34,6 +34,15 @@ const UrlList = styled.div`
   min-height: 30px;
 `;
 
+const InnerList = React.memo(({ urlObj, index }) => {
+  if (urlObj.type === 'url') {
+    return <DraggableUrl urlObj={urlObj} index={index} />;
+  } else if (urlObj.type === 'divider') {
+    return <DividerSection urlObj={urlObj} index={index} />;
+  }
+  return <></>;
+});
+
 const Folder = ({ folder, urls, index }) => {
   const [isMinimised, setMinimised] = useState(false);
 
@@ -56,24 +65,13 @@ const Folder = ({ folder, urls, index }) => {
                   isDraggingOver={snapshot.isDraggingOver}
                 >
                   {urls.map((urlObj, index) => {
-                    if (urlObj.type === 'url') {
-                      return (
-                        <DraggableUrl
-                          key={urlObj.id}
-                          urlObj={urlObj}
-                          index={index}
-                        />
-                      );
-                    } else if (urlObj.type === 'divider') {
-                      return (
-                        <DividerSection
-                          key={urlObj.id}
-                          urlObj={urlObj}
-                          index={index}
-                        />
-                      );
-                    }
-                    return <></>;
+                    return (
+                      <InnerList
+                        key={urlObj.id}
+                        urlObj={urlObj}
+                        index={index}
+                      />
+                    );
                   })}
                   {provided.placeholder}
                 </UrlList>

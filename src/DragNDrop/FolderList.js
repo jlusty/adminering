@@ -20,6 +20,11 @@ const Title = styled.h3`
   padding: 8px;
 `;
 
+const InnerList = React.memo(({ folder, urlMap, index }) => {
+  const urls = folder.urlIds.map(urlId => urlMap[urlId]);
+  return <Folder folder={folder} urls={urls} index={index} />;
+});
+
 const FolderList = ({ folderColumn, folders, allUrls }) => {
   return (
     <Container>
@@ -36,13 +41,11 @@ const FolderList = ({ folderColumn, folders, allUrls }) => {
             direction={folderColumn.direction}
           >
             {folders.map((folder, index) => {
-              const urls = folder.urlIds.map(urlId => allUrls[urlId]);
-
               return (
-                <Folder
+                <InnerList
                   key={folder.id}
                   folder={folder}
-                  urls={urls}
+                  urlMap={allUrls}
                   index={index}
                 />
               );
