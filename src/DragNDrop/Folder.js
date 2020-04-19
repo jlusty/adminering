@@ -24,11 +24,11 @@ const UrlList = styled.div`
   min-height: 300px;
 `;
 
-const Column = ({ column, urls }) => {
+const Folder = ({ folder, urls }) => {
   return (
     <Container>
-      <Title>{column.title}</Title>
-      <Droppable droppableId={column.id}>
+      <Title>{folder.title}</Title>
+      <Droppable droppableId={folder.id}>
         {(provided, snapshot) => (
           <UrlList
             ref={provided.innerRef}
@@ -59,4 +59,4 @@ const Column = ({ column, urls }) => {
   );
 };
 
-export default Column;
+export default Folder;

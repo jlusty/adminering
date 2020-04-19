@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
-import Column from './Column';
+import Folder from './Folder';
 
 const Container = styled.div`
   display: flex;
@@ -27,22 +27,22 @@ const DnD = () => {
       return;
     }
 
-    const start = data.columns[source.droppableId];
-    const finish = data.columns[destination.droppableId];
+    const start = data.folders[source.droppableId];
+    const finish = data.folders[destination.droppableId];
 
     if (start === finish) {
       const newUrlIds = Array.from(start.urlIds);
       newUrlIds.splice(source.index, 1);
       newUrlIds.splice(destination.index, 0, draggableId);
 
-      const newColumn = {
+      const newFolder = {
         ...start,
         urlIds: newUrlIds,
       };
 
       const newState = {
         ...data,
-        columns: { ...data.columns, [newColumn.id]: newColumn },
+        folders: { ...data.folders, [newFolder.id]: newFolder },
       };
 
       setData(newState);
@@ -66,8 +66,8 @@ const DnD = () => {
 
     const newState = {
       ...data,
-      columns: {
-        ...data.columns,
+      folders: {
+        ...data.folders,
         [newStart.id]: newStart,
         [newFinish.id]: newFinish,
       },
@@ -78,11 +78,11 @@ const DnD = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Container>
-        {data.columnOrder.map(columnId => {
-          const column = data.columns[columnId];
-          const urls = column.urlIds.map(urlId => data.urls[urlId]);
+        {data.folderOrder.map(folderId => {
+          const folder = data.folders[folderId];
+          const urls = folder.urlIds.map(urlId => data.urls[urlId]);
 
-          return <Column key={column.id} column={column} urls={urls} />;
+          return <Folder key={folder.id} folder={folder} urls={urls} />;
         })}
       </Container>
     </DragDropContext>
