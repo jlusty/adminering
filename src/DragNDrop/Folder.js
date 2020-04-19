@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import DraggableUrl from './DraggableUrl';
@@ -14,53 +14,71 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const TitleBar = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 const Title = styled.h3`
   margin: 0px;
   padding: 8px;
+`;
+const MinimiseBtn = styled.div`
+  height: 30px;
+  width: 30px;
+  background-color: green;
 `;
 const UrlList = styled.div`
   padding: 8px;
   background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
   flex-grow: 1;
-  min-height: 300px;
+  min-height: 30px;
 `;
 
 const Folder = ({ folder, urls, index }) => {
+  const [isMinimised, setMinimised] = useState(false);
+
   return (
     <Draggable draggableId={folder.id} index={index}>
       {provided => (
         <Container {...provided.draggableProps} ref={provided.innerRef}>
-          <Title {...provided.dragHandleProps}>{folder.title}</Title>
+          <TitleBar>
+            <Title {...provided.dragHandleProps}>{folder.title}</Title>
+            <MinimiseBtn onClick={() => setMinimised(!isMinimised)} />
+          </TitleBar>
           <Droppable droppableId={folder.id} type="url">
-            {(provided, snapshot) => (
-              <UrlList
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                isDraggingOver={snapshot.isDraggingOver}
-              >
-                {urls.map((urlObj, index) => {
-                  if (urlObj.type === 'url') {
-                    return (
-                      <DraggableUrl
-                        key={urlObj.id}
-                        urlObj={urlObj}
-                        index={index}
-                      />
-                    );
-                  } else if (urlObj.type === 'divider') {
-                    return (
-                      <DividerSection
-                        key={urlObj.id}
-                        urlObj={urlObj}
-                        index={index}
-                      />
-                    );
-                  }
-                  return <></>;
-                })}
-                {provided.placeholder}
-              </UrlList>
-            )}
+            {(provided, snapshot) =>
+              isMinimised ? (
+                <></>
+              ) : (
+                <UrlList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                  {urls.map((urlObj, index) => {
+                    if (urlObj.type === 'url') {
+                      return (
+                        <DraggableUrl
+                          key={urlObj.id}
+                          urlObj={urlObj}
+                          index={index}
+                        />
+                      );
+                    } else if (urlObj.type === 'divider') {
+                      return (
+                        <DividerSection
+                          key={urlObj.id}
+                          urlObj={urlObj}
+                          index={index}
+                        />
+                      );
+                    }
+                    return <></>;
+                  })}
+                  {provided.placeholder}
+                </UrlList>
+              )
+            }
           </Droppable>
         </Container>
       )}

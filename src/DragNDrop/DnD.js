@@ -4,10 +4,13 @@ import styled from 'styled-components';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import initialData from './initial-data';
 import Folder from './Folder';
+import FolderList from './FolderList';
 
 const Container = styled.div`
-  display: flex;
   margin: 20px 20px;
+
+  display: flex;
+  flex-direction: row;
 `;
 
 const DnD = () => {
@@ -28,14 +31,54 @@ const DnD = () => {
     }
 
     if (type === 'folder') {
-      const newFolderOrder = Array.from(data.folderOrder);
-      newFolderOrder.splice(source.index, 1);
-      newFolderOrder.splice(destination.index, 0, draggableId);
+      const start = data.folderColumns[source.droppableId];
+      const finish = data.folderColumns[destination.droppableId];
+
+      if (start === finish) {
+        const newFolderIds = Array.from(start.folderIds);
+        newFolderIds.splice(source.index, 1);
+        newFolderIds.splice(destination.index, 0, draggableId);
+
+        const newFolderColumn = {
+          ...start,
+          folderIds: newFolderIds,
+        };
+
+        const newState = {
+          ...data,
+          folderColumns: {
+            ...data.folderColumns,
+            [newFolderColumn.id]: newFolderColumn,
+          },
+        };
+        setData(newState);
+        return;
+      }
+
+      // Moving from one list to another
+      const startFolderIds = Array.from(start.folderIds);
+      startFolderIds.splice(source.index, 1);
+      const newStart = {
+        ...start,
+        folderIds: startFolderIds,
+      };
+
+      const finishFolderIds = Array.from(finish.folderIds);
+      finishFolderIds.splice(destination.index, 0, draggableId);
+      const newFinish = {
+        ...finish,
+        folderIds: finishFolderIds,
+      };
 
       const newState = {
         ...data,
-        folderOrder: newFolderOrder,
+        folderColumns: {
+          ...data.folderColumns,
+          [newStart.id]: newStart,
+          [newFinish.id]: newFinish,
+        },
       };
+
       setData(newState);
       return;
     }
@@ -90,26 +133,10 @@ const DnD = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-folders" direction="horizontal" type="folder">
-        {provided => (
-          <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {data.folderOrder.map((folderId, index) => {
-              const folder = data.folders[folderId];
-              const urls = folder.urlIds.map(urlId => data.urls[urlId]);
-
-              return (
-                <Folder
-                  key={folder.id}
-                  folder={folder}
-                  urls={urls}
-                  index={index}
-                />
-              );
-            })}
-            {provided.placeholder}
-          </Container>
-        )}
-      </Droppable>
+      <Container>
+        <FolderList droppableId="folder-column-1" data={data} />
+        <FolderList droppableId="folder-column-2" data={data} />
+      </Container>
     </DragDropContext>
   );
 };
