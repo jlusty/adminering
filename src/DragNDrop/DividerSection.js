@@ -11,6 +11,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
+const DividerText = styled.p`
+  margin: 0px;
+  font-size: 12px;
+`;
 
 const DividerSection = ({ urlObj, index }) => {
   return (
@@ -22,7 +26,7 @@ const DividerSection = ({ urlObj, index }) => {
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
         >
-          Hi
+          <DividerText>Section #{urlObj.groupNum}</DividerText>
         </Container>
       )}
     </Draggable>

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import DraggableUrl from './DraggableUrl';
+import DividerSection from './DividerSection';
 
 const Container = styled.div`
   margin: 8px;
@@ -34,9 +35,22 @@ const Column = ({ column, urls }) => {
             {...provided.droppableProps}
             isDraggingOver={snapshot.isDraggingOver}
           >
-            {urls.map((urlObj, index) => (
-              <DraggableUrl key={urlObj.id} urlObj={urlObj} index={index} />
-            ))}
+            {urls.map((urlObj, index) => {
+              if (urlObj.type === 'url') {
+                return (
+                  <DraggableUrl key={urlObj.id} urlObj={urlObj} index={index} />
+                );
+              } else if (urlObj.type === 'divider') {
+                return (
+                  <DividerSection
+                    key={urlObj.id}
+                    urlObj={urlObj}
+                    index={index}
+                  />
+                );
+              }
+              return <></>;
+            })}
             {provided.placeholder}
           </UrlList>
         )}
