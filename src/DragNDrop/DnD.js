@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import 'normalize.css';
 import styled from 'styled-components';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import initialData from './initial-data';
 import Folder from './Folder';
 
@@ -14,7 +14,7 @@ const DnD = () => {
   const [data, setData] = useState(initialData);
 
   const onDragEnd = result => {
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
 
     if (!destination) {
       return;
@@ -24,6 +24,19 @@ const DnD = () => {
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
+      return;
+    }
+
+    if (type === 'folder') {
+      const newFolderOrder = Array.from(data.folderOrder);
+      newFolderOrder.splice(source.index, 1);
+      newFolderOrder.splice(destination.index, 0, draggableId);
+
+      const newState = {
+        ...data,
+        folderOrder: newFolderOrder,
+      };
+      setData(newState);
       return;
     }
 
@@ -77,14 +90,26 @@ const DnD = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Container>
-        {data.folderOrder.map(folderId => {
-          const folder = data.folders[folderId];
-          const urls = folder.urlIds.map(urlId => data.urls[urlId]);
+      <Droppable droppableId="all-folders" direction="horizontal" type="folder">
+        {provided => (
+          <Container {...provided.droppableProps} ref={provided.innerRef}>
+            {data.folderOrder.map((folderId, index) => {
+              const folder = data.folders[folderId];
+              const urls = folder.urlIds.map(urlId => data.urls[urlId]);
 
-          return <Folder key={folder.id} folder={folder} urls={urls} />;
-        })}
-      </Container>
+              return (
+                <Folder
+                  key={folder.id}
+                  folder={folder}
+                  urls={urls}
+                  index={index}
+                />
+              );
+            })}
+            {provided.placeholder}
+          </Container>
+        )}
+      </Droppable>
     </DragDropContext>
   );
 };
