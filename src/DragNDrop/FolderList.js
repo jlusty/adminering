@@ -8,7 +8,13 @@ const Container = styled.div`
   border: 1px solid lightgrey;
   background-color: white;
   border-radius: 2px;
-  width: 300px;
+  height: 70vh;
+  min-width: 318px;
+`;
+const InnerContainer = styled.div`
+  background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
+  border-radius: 2px;
+  width: 100%;
   min-height: 100px;
 
   display: flex;
@@ -34,11 +40,12 @@ const FolderList = ({ folderColumn, folders, allUrls }) => {
         direction={folderColumn.direction}
         type="folder"
       >
-        {provided => (
-          <Container
+        {(provided, snapshot) => (
+          <InnerContainer
             {...provided.droppableProps}
             ref={provided.innerRef}
             direction={folderColumn.direction}
+            isDraggingOver={snapshot.isDraggingOver}
           >
             {folders.map((folder, index) => {
               return (
@@ -51,7 +58,7 @@ const FolderList = ({ folderColumn, folders, allUrls }) => {
               );
             })}
             {provided.placeholder}
-          </Container>
+          </InnerContainer>
         )}
       </Droppable>
     </Container>

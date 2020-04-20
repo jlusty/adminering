@@ -7,7 +7,7 @@ import DividerSection from './DividerSection';
 const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgrey;
-  background-color: white;
+  background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
   border-radius: 2px;
   width: 300px;
 
@@ -17,15 +17,18 @@ const Container = styled.div`
 const TitleBar = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 `;
 const Title = styled.h3`
   margin: 0px;
   padding: 8px;
 `;
 const MinimiseBtn = styled.div`
-  height: 30px;
-  width: 30px;
-  background-color: green;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  border: 5px solid white;
+  background-color: lightgrey;
 `;
 const UrlList = styled.div`
   padding: 8px;
@@ -57,12 +60,16 @@ const UrlOrDivider = ({ type, urlObj, index }) => {
 };
 
 const Folder = ({ folder, urls, index }) => {
-  const [isMinimised, setMinimised] = useState(false);
+  const [isMinimised, setMinimised] = useState(true);
 
   return (
     <Draggable draggableId={folder.id} index={index}>
-      {provided => (
-        <Container {...provided.draggableProps} ref={provided.innerRef}>
+      {(provided, snapshot) => (
+        <Container
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          isDragging={snapshot.isDragging}
+        >
           <TitleBar>
             <Title {...provided.dragHandleProps}>{folder.title}</Title>
             <MinimiseBtn onClick={() => setMinimised(!isMinimised)} />
