@@ -91,19 +91,31 @@ const DnD = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Container>
-        {folderColumnsOrder.map(folderColumnId => (
-          <FolderList
-            key={folderColumnId}
-            folderColumn={data.folderColumns[folderColumnId]}
-            folders={data.folderColumns[folderColumnId].folderIds.map(
-              folderId => data.folders[folderId]
-            )}
-            allUrls={data.urls}
-          />
-        ))}
+        {folderColumnsOrder.map(folderColumnId => {
+          const folderColumn = data.folderColumns[folderColumnId];
+          return (
+            <InnerList
+              key={folderColumn.id}
+              folderColumn={folderColumn}
+              allFolders={data.folders}
+              allUrls={data.urls}
+            />
+          );
+        })}
       </Container>
     </DragDropContext>
   );
 };
+
+const InnerList = React.memo(({ folderColumn, allFolders, allUrls }) => {
+  const folders = folderColumn.folderIds.map(folderId => allFolders[folderId]);
+  return (
+    <FolderList
+      folderColumn={folderColumn}
+      folders={folders}
+      allUrls={allUrls}
+    />
+  );
+});
 
 export default DnD;

@@ -34,14 +34,27 @@ const UrlList = styled.div`
   min-height: 30px;
 `;
 
-const InnerList = React.memo(({ urlObj, index }) => {
-  if (urlObj.type === 'url') {
+const InnerList = React.memo(({ urls, isMinimised }) => {
+  if (isMinimised) {
+    return <></>;
+  }
+  return urls.map((urlObj, index) => (
+    <UrlOrDivider
+      key={urlObj.id}
+      type={urlObj.type}
+      urlObj={urlObj}
+      index={index}
+    />
+  ));
+});
+
+const UrlOrDivider = ({ type, urlObj, index }) => {
+  if (type === 'url') {
     return <DraggableUrl urlObj={urlObj} index={index} />;
-  } else if (urlObj.type === 'divider') {
+  } else {
     return <DividerSection urlObj={urlObj} index={index} />;
   }
-  return <></>;
-});
+};
 
 const Folder = ({ folder, urls, index }) => {
   const [isMinimised, setMinimised] = useState(false);
@@ -55,28 +68,16 @@ const Folder = ({ folder, urls, index }) => {
             <MinimiseBtn onClick={() => setMinimised(!isMinimised)} />
           </TitleBar>
           <Droppable droppableId={folder.id} type="url">
-            {(provided, snapshot) =>
-              isMinimised ? (
-                <div ref={provided.innerRef}></div>
-              ) : (
-                <UrlList
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  isDraggingOver={snapshot.isDraggingOver}
-                >
-                  {urls.map((urlObj, index) => {
-                    return (
-                      <InnerList
-                        key={urlObj.id}
-                        urlObj={urlObj}
-                        index={index}
-                      />
-                    );
-                  })}
-                  {provided.placeholder}
-                </UrlList>
-              )
-            }
+            {(provided, snapshot) => (
+              <UrlList
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                isDraggingOver={snapshot.isDraggingOver}
+              >
+                <InnerList urls={urls} isMinimised={isMinimised} />
+                {provided.placeholder}
+              </UrlList>
+            )}
           </Droppable>
         </Container>
       )}
