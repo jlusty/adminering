@@ -9,7 +9,6 @@ import * as serviceWorker from './serviceWorker';
 ReactDOM.render(
   <React.StrictMode>
     <DnD />
-    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

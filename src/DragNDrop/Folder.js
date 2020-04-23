@@ -19,7 +19,12 @@ const TitleBar = styled.div`
   flex-direction: row;
   justify-content: space-between;
 `;
-const Title = styled.h3`
+const TitleText = styled.h3`
+  margin: 0px;
+  padding: 8px;
+`;
+const TitleInput = styled.input`
+  width: 200px;
   margin: 0px;
   padding: 8px;
 `;
@@ -28,7 +33,18 @@ const MinimiseBtn = styled.div`
   width: 25px;
   border-radius: 50%;
   border: 5px solid white;
-  background-color: lightgrey;
+  background-color: ${props => (props.isMinimised ? 'pink' : 'lightgrey')};
+`;
+const EditBtn = styled.div`
+  height: 25px;
+  width: 25px;
+  border: 5px solid white;
+  background-color: ${props => (props.isEditingTitle ? 'purple' : 'lightgrey')};
+`;
+const BtnBox = styled.div`
+  width: 70px;
+  display: flex;
+  flex-direction: row;
 `;
 const UrlList = styled.div`
   padding: 8px;
@@ -59,8 +75,25 @@ const UrlOrDivider = ({ type, urlObj, index }) => {
   }
 };
 
+const Title = ({ text, isEditingTitle }) => {
+  const [titleText, setTitleText] = useState(text);
+
+  return isEditingTitle ? (
+    <TitleInput
+      type="text"
+      value={titleText}
+      onChange={e => {
+        setTitleText(e.target.value);
+      }}
+    ></TitleInput>
+  ) : (
+    <TitleText>{titleText}</TitleText>
+  );
+};
+
 const Folder = ({ folder, urls, index }) => {
   const [isMinimised, setMinimised] = useState(true);
+  const [isEditingTitle, setEditingTitle] = useState(false);
 
   return (
     <Draggable draggableId={folder.id} index={index}>
@@ -70,9 +103,18 @@ const Folder = ({ folder, urls, index }) => {
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
         >
-          <TitleBar>
-            <Title {...provided.dragHandleProps}>{folder.title}</Title>
-            <MinimiseBtn onClick={() => setMinimised(!isMinimised)} />
+          <TitleBar {...provided.dragHandleProps}>
+            <Title text={folder.title} isEditingTitle={isEditingTitle} />
+            <BtnBox>
+              <EditBtn
+                onClick={() => setEditingTitle(!isEditingTitle)}
+                isEditingTitle={isEditingTitle}
+              />
+              <MinimiseBtn
+                onClick={() => setMinimised(!isMinimised)}
+                isMinimised={isMinimised}
+              />
+            </BtnBox>
           </TitleBar>
           <Droppable droppableId={folder.id} type="url">
             {(provided, snapshot) => (
