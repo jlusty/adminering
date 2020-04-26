@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import 'normalize.css';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
