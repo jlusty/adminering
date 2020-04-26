@@ -26,12 +26,12 @@ const Title = styled.h3`
   padding: 8px;
 `;
 
-const InnerList = React.memo(({ folder, urlMap, index }) => {
+const InnerList = React.memo(({ folder, urlMap, index, ...props }) => {
   const urls = folder.urlIds.map(urlId => urlMap[urlId]);
-  return <Folder folder={folder} urls={urls} index={index} />;
+  return <Folder folder={folder} urls={urls} index={index} {...props} />;
 });
 
-const FolderList = ({ folderColumn, folders, allUrls }) => {
+const FolderList = ({ folderColumn, folders, allUrls, ...props }) => {
   return (
     <Container>
       <Title>{folderColumn.id}</Title>
@@ -54,6 +54,7 @@ const FolderList = ({ folderColumn, folders, allUrls }) => {
                   folder={folder}
                   urlMap={allUrls}
                   index={index}
+                  {...props}
                 />
               );
             })}

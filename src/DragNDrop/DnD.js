@@ -14,6 +14,24 @@ const Container = styled.div`
 const DnD = () => {
   const [data, setData] = useState(initialData);
 
+  const removeDraggableUrl = (folderId, urlIndex) => {
+    const newItemIds = Array.from(data.folders[folderId].urlIds);
+    const urlsRemoved = newItemIds.splice(urlIndex, 1);
+    const urlIdRemoved = urlsRemoved[0];
+
+    const newFolder = {
+      ...data.folders[folderId],
+      urlIds: newItemIds,
+    };
+    const { [urlIdRemoved]: omit, ...newUrls } = data.urls;
+    const newState = {
+      ...data,
+      urls: newUrls,
+      folders: { ...data.folders, [folderId]: newFolder },
+    };
+    setData(newState);
+  };
+
   const onDragEnd = result => {
     const { destination, source, draggableId, type } = result;
 
@@ -98,6 +116,7 @@ const DnD = () => {
               folderColumn={folderColumn}
               allFolders={data.folders}
               allUrls={data.urls}
+              removeDraggableUrl={removeDraggableUrl}
             />
           );
         })}
@@ -106,15 +125,20 @@ const DnD = () => {
   );
 };
 
-const InnerList = React.memo(({ folderColumn, allFolders, allUrls }) => {
-  const folders = folderColumn.folderIds.map(folderId => allFolders[folderId]);
-  return (
-    <FolderList
-      folderColumn={folderColumn}
-      folders={folders}
-      allUrls={allUrls}
-    />
-  );
-});
+const InnerList = React.memo(
+  ({ folderColumn, allFolders, allUrls, ...props }) => {
+    const folders = folderColumn.folderIds.map(
+      folderId => allFolders[folderId]
+    );
+    return (
+      <FolderList
+        folderColumn={folderColumn}
+        folders={folders}
+        allUrls={allUrls}
+        {...props}
+      />
+    );
+  }
+);
 
 export default DnD;

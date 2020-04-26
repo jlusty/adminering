@@ -55,7 +55,7 @@ const UrlList = styled.div`
   min-height: 30px;
 `;
 
-const InnerList = React.memo(({ urls, isMinimised }) => {
+const InnerList = React.memo(({ urls, isMinimised, ...props }) => {
   if (isMinimised) {
     return <></>;
   }
@@ -65,13 +65,14 @@ const InnerList = React.memo(({ urls, isMinimised }) => {
       type={urlObj.type}
       urlObj={urlObj}
       index={index}
+      {...props}
     />
   ));
 });
 
-const UrlOrDivider = ({ type, urlObj, index }) => {
+const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
   if (type === 'url') {
-    return <DraggableUrl urlObj={urlObj} index={index} />;
+    return <DraggableUrl urlObj={urlObj} index={index} {...props} />;
   } else {
     return <DividerSection urlObj={urlObj} index={index} />;
   }
@@ -99,7 +100,7 @@ const Title = ({ folderId, isEditingTitle }) => {
   );
 };
 
-const Folder = ({ folder, urls, index }) => {
+const Folder = ({ folder, urls, index, ...props }) => {
   const isMinimised = useSelector(
     state => state.dnd.folders[folder.id].isMinimised
   );
@@ -139,7 +140,14 @@ const Folder = ({ folder, urls, index }) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                <InnerList urls={urls} isMinimised={isMinimised} />
+                <InnerList
+                  urls={urls}
+                  isMinimised={isMinimised}
+                  removeDraggableUrlAtIndex={urlIndex =>
+                    props.removeDraggableUrl(folder.id, urlIndex)
+                  }
+                  {...props}
+                />
                 {provided.placeholder}
               </UrlList>
             )}

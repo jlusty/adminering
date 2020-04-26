@@ -34,7 +34,7 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-const DraggableUrl = ({ urlObj, index }) => {
+const DraggableUrl = ({ urlObj, index, removeDraggableUrlAtIndex }) => {
   return (
     <Draggable draggableId={urlObj.id} index={index}>
       {(provided, snapshot) => (
@@ -67,7 +67,9 @@ const DraggableUrl = ({ urlObj, index }) => {
             )}
           </UrlText>
           <Spacer />
-          <DeleteBtn>x</DeleteBtn>
+          <DeleteBtn onClick={() => removeDraggableUrlAtIndex(index)}>
+            x
+          </DeleteBtn>
         </Container>
       )}
     </Draggable>
