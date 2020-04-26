@@ -25,6 +25,14 @@ const UrlText = styled.p`
   margin: 0px;
   font-size: 12px;
 `;
+const Spacer = styled.div`
+  flex-grow: 1;
+`;
+const DeleteBtn = styled.div`
+  height: 10px;
+  width: 10px;
+  border: 5px solid lightgrey;
+`;
 
 const DraggableUrl = ({ urlObj, index }) => {
   return (
@@ -58,6 +66,8 @@ const DraggableUrl = ({ urlObj, index }) => {
               <></>
             )}
           </UrlText>
+          <Spacer />
+          <DeleteBtn>x</DeleteBtn>
         </Container>
       )}
     </Draggable>

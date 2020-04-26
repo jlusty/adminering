@@ -1,15 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as serviceWorker from './serviceWorker';
 import 'normalize.css';
 import './index.css';
+import * as serviceWorker from './serviceWorker';
+import store from './store/store';
+import { Provider } from 'react-redux';
 import DnD from './DragNDrop/DnD';
+import { Counter } from './features/counter/Counter';
 import { Example } from './YouTube/YouTube';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DnD />
-    <Example />
+    <Provider store={store}>
+      <Counter />
+      <DnD />
+      <Example />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

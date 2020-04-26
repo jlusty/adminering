@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import DraggableUrl from './DraggableUrl';
 import DividerSection from './DividerSection';
+import { setMinimised, setEditingTitle, changeFolderTitle } from './dndSlice';
 
 const Container = styled.div`
   margin: 8px;
@@ -75,15 +77,21 @@ const UrlOrDivider = ({ type, urlObj, index }) => {
   }
 };
 
-const Title = ({ text, isEditingTitle }) => {
-  const [titleText, setTitleText] = useState(text);
+const Title = ({ folderId, isEditingTitle }) => {
+  const dispatch = useDispatch();
+  const titleText = useSelector(state => state.dnd.folders[folderId].title);
 
   return isEditingTitle ? (
     <TitleInput
       type="text"
       value={titleText}
       onChange={e => {
-        setTitleText(e.target.value);
+        dispatch(changeFolderTitle({ folderId, newTitle: e.target.value }));
+      }}
+      onKeyDown={e => {
+        if (e.key === 'Enter') {
+          dispatch(setEditingTitle(folderId));
+        }
       }}
     ></TitleInput>
   ) : (
@@ -92,8 +100,13 @@ const Title = ({ text, isEditingTitle }) => {
 };
 
 const Folder = ({ folder, urls, index }) => {
-  const [isMinimised, setMinimised] = useState(true);
-  const [isEditingTitle, setEditingTitle] = useState(false);
+  const isMinimised = useSelector(
+    state => state.dnd.folders[folder.id].isMinimised
+  );
+  const isEditingTitle = useSelector(
+    state => state.dnd.folders[folder.id].isEditingTitle
+  );
+  const dispatch = useDispatch();
 
   return (
     <Draggable draggableId={folder.id} index={index}>
@@ -104,14 +117,17 @@ const Folder = ({ folder, urls, index }) => {
           isDragging={snapshot.isDragging}
         >
           <TitleBar {...provided.dragHandleProps}>
-            <Title text={folder.title} isEditingTitle={isEditingTitle} />
+            <Title folderId={folder.id} isEditingTitle={isEditingTitle} />
             <BtnBox>
               <EditBtn
-                onClick={() => setEditingTitle(!isEditingTitle)}
+                onClick={() => dispatch(setEditingTitle(folder.id))}
+                onKeyDown={() => {
+                  console.log('hi');
+                }}
                 isEditingTitle={isEditingTitle}
               />
               <MinimiseBtn
-                onClick={() => setMinimised(!isMinimised)}
+                onClick={() => dispatch(setMinimised(folder.id))}
                 isMinimised={isMinimised}
               />
             </BtnBox>
