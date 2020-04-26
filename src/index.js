@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as serviceWorker from './serviceWorker';
 import 'normalize.css';
 import './index.css';
 import DnD from './DragNDrop/DnD';
-import * as serviceWorker from './serviceWorker';
+import { Example } from './YouTube/YouTube';
 
 ReactDOM.render(
   <React.StrictMode>
     <DnD />
+    <Example />
   </React.StrictMode>,
   document.getElementById('root')
 );
