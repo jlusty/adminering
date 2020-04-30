@@ -74,7 +74,7 @@ const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
   if (type === 'url') {
     return <DraggableUrl urlObj={urlObj} index={index} {...props} />;
   } else {
-    return <DividerSection urlObj={urlObj} index={index} />;
+    return <DividerSection urlObj={urlObj} index={index} {...props} />;
   }
 };
 
@@ -100,7 +100,7 @@ const Title = ({ folderId, isEditingTitle }) => {
   );
 };
 
-const Folder = ({ folder, urls, index, ...props }) => {
+const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
   const isMinimised = useSelector(
     state => state.dnd.folders[folder.id].isMinimised
   );
@@ -143,8 +143,8 @@ const Folder = ({ folder, urls, index, ...props }) => {
                 <InnerList
                   urls={urls}
                   isMinimised={isMinimised}
-                  removeDraggableUrlAtIndex={urlIndex =>
-                    props.removeDraggableUrl(folder.id, urlIndex)
+                  removeUrlOrDividerAtIndex={urlIndex =>
+                    removeUrlOrDivider(folder.id, urlIndex)
                   }
                   {...props}
                 />

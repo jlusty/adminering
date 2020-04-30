@@ -29,7 +29,7 @@ const DnD = () => {
     }
   }, []);
 
-  const removeDraggableUrl = (folderId, urlIndex) => {
+  const removeUrlOrDivider = (folderId, urlIndex) => {
     const newItemIds = Array.from(data.folders[folderId].urlIds);
     const urlsRemoved = newItemIds.splice(urlIndex, 1);
     const urlIdRemoved = urlsRemoved[0];
@@ -139,7 +139,7 @@ const DnD = () => {
                 folderColumn={folderColumn}
                 allFolders={data.folders}
                 allUrls={data.urls}
-                removeDraggableUrl={removeDraggableUrl}
+                removeUrlOrDivider={removeUrlOrDivider}
               />
             );
           })}

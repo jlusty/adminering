@@ -15,8 +15,16 @@ const DividerText = styled.p`
   margin: 0px;
   font-size: 12px;
 `;
+const Spacer = styled.div`
+  flex-grow: 1;
+`;
+const DeleteBtn = styled.div`
+  height: 10px;
+  width: 10px;
+  border: 5px solid lightgrey;
+`;
 
-const DividerSection = ({ urlObj, index }) => {
+const DividerSection = ({ urlObj, index, removeUrlOrDividerAtIndex }) => {
   return (
     <Draggable draggableId={urlObj.id} index={index} isDragDisabled={true}>
       {(provided, snapshot) => (
@@ -27,6 +35,10 @@ const DividerSection = ({ urlObj, index }) => {
           isDragging={snapshot.isDragging}
         >
           <DividerText>Section #{urlObj.groupNum}</DividerText>
+          <Spacer />
+          <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>
+            x
+          </DeleteBtn>
         </Container>
       )}
     </Draggable>
