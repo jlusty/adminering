@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
@@ -11,8 +11,23 @@ const Container = styled.div`
   flex-direction: row;
 `;
 
+const SaveBtn = styled.div`
+  margin-left: 50px;
+  padding: 10px 20px;
+  background-color: lightgrey;
+  width: 60px;
+  height: 30px;
+`;
+
 const DnD = () => {
   const [data, setData] = useState(initialData);
+
+  useEffect(() => {
+    const initialData = localStorage.getItem('current-data');
+    if (initialData) {
+      setData(JSON.parse(initialData));
+    }
+  }, []);
 
   const removeDraggableUrl = (folderId, urlIndex) => {
     const newItemIds = Array.from(data.folders[folderId].urlIds);
@@ -106,22 +121,31 @@ const DnD = () => {
   const { folderColumnsOrder } = data;
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Container>
-        {folderColumnsOrder.map(folderColumnId => {
-          const folderColumn = data.folderColumns[folderColumnId];
-          return (
-            <InnerList
-              key={folderColumn.id}
-              folderColumn={folderColumn}
-              allFolders={data.folders}
-              allUrls={data.urls}
-              removeDraggableUrl={removeDraggableUrl}
-            />
-          );
-        })}
-      </Container>
-    </DragDropContext>
+    <>
+      <SaveBtn
+        onClick={() => {
+          saveState(data);
+        }}
+      >
+        Save
+      </SaveBtn>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Container>
+          {folderColumnsOrder.map(folderColumnId => {
+            const folderColumn = data.folderColumns[folderColumnId];
+            return (
+              <InnerList
+                key={folderColumn.id}
+                folderColumn={folderColumn}
+                allFolders={data.folders}
+                allUrls={data.urls}
+                removeDraggableUrl={removeDraggableUrl}
+              />
+            );
+          })}
+        </Container>
+      </DragDropContext>
+    </>
   );
 };
 
@@ -140,5 +164,9 @@ const InnerList = React.memo(
     );
   }
 );
+
+const saveState = data => {
+  localStorage.setItem('current-data', JSON.stringify(data));
+};
 
 export default DnD;
