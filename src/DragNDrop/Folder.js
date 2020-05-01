@@ -157,17 +157,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
                     outerRef={provided.innerRef}
                     itemData={urls}
                   >
-                    {({ data: urls, index, style }) =>
-                      Row(
-                        urls,
-                        index,
-                        style,
-                        isMinimised,
-                        removeUrlOrDivider,
-                        folder,
-                        props
-                      )
-                    }
+                    {Row}
                   </List>
                 </UrlList>
               );
@@ -179,15 +169,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
   );
 };
 
-const Row = (
-  urls,
-  index,
-  style,
-  isMinimised,
-  removeUrlOrDivider,
-  folder,
-  props
-) => {
+const Row = ({ data: urls, index, style }) => {
   const urlObj = urls[index];
 
   // Rendering an extra item for the placeholder
@@ -195,19 +177,14 @@ const Row = (
     return null;
   }
 
-  return isMinimised ? (
-    <></>
-  ) : (
+  return (
     <UrlOrDivider
       key={urlObj.id}
       type={urlObj.type}
       urlObj={urlObj}
       index={index}
-      removeUrlOrDividerAtIndex={urlIndex =>
-        removeUrlOrDivider(folder.id, urlIndex)
-      }
+      removeUrlOrDividerAtIndex={() => {}}
       style={style}
-      {...props}
     />
   );
 };
