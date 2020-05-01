@@ -34,46 +34,50 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-const DraggableUrl = ({ urlObj, index, removeUrlOrDividerAtIndex }) => {
+const DraggableUrl = ({ urlObj, index, style, removeUrlOrDividerAtIndex }) => {
   return (
     <Draggable draggableId={urlObj.id} index={index}>
       {(provided, snapshot) => (
-        <Container
+        <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
         >
-          <FaviconContainer>
-            <ImgCentreHelper>
-              <img
-                className="faviconImg"
-                alt="Website favicon"
-                height="16"
-                width="16"
-                src={`http://www.google.com/s2/favicons?domain=${urlObj.url}`}
-              />
-            </ImgCentreHelper>
-          </FaviconContainer>
-          <UrlText>
-            <a href={urlObj.url}>{urlObj.description}</a>
-            {urlObj.siteName ? (
-              <>
-                <br />
-                {urlObj.siteName}
-              </>
-            ) : (
-              <></>
-            )}
-          </UrlText>
-          <Spacer />
-          <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>
-            x
-          </DeleteBtn>
-        </Container>
+          {UrlItem(urlObj, index, style, removeUrlOrDividerAtIndex)}
+        </div>
       )}
     </Draggable>
   );
 };
+
+export const UrlItem = (urlObj, index, style, removeUrlOrDividerAtIndex) => (
+  <Container style={style}>
+    <FaviconContainer>
+      <ImgCentreHelper>
+        <img
+          className="faviconImg"
+          alt="Website favicon"
+          height="16"
+          width="16"
+          src={`http://www.google.com/s2/favicons?domain=${urlObj.url}`}
+        />
+      </ImgCentreHelper>
+    </FaviconContainer>
+    <UrlText>
+      <a href={urlObj.url}>{urlObj.description}</a>
+      {urlObj.siteName ? (
+        <>
+          <br />
+          {urlObj.siteName}
+        </>
+      ) : (
+        <></>
+      )}
+    </UrlText>
+    <Spacer />
+    <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>x</DeleteBtn>
+  </Container>
+);
 
 export default DraggableUrl;

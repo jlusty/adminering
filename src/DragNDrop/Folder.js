@@ -2,7 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import DraggableUrl from './DraggableUrl';
+import { FixedSizeList as List } from 'react-window';
+import DraggableUrl, { UrlItem } from './DraggableUrl';
 import DividerSection from './DividerSection';
 import { setMinimised, setEditingTitle, changeFolderTitle } from './dndSlice';
 
@@ -54,21 +55,6 @@ const UrlList = styled.div`
   flex-grow: 1;
   min-height: 30px;
 `;
-
-const InnerList = React.memo(({ urls, isMinimised, ...props }) => {
-  if (isMinimised) {
-    return <></>;
-  }
-  return urls.map((urlObj, index) => (
-    <UrlOrDivider
-      key={urlObj.id}
-      type={urlObj.type}
-      urlObj={urlObj}
-      index={index}
-      {...props}
-    />
-  ));
-});
 
 const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
   if (type === 'url') {
@@ -133,28 +119,96 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
               />
             </BtnBox>
           </TitleBar>
-          <Droppable droppableId={folder.id} type="url">
-            {(provided, snapshot) => (
-              <UrlList
+          <Droppable
+            droppableId={folder.id}
+            type="url"
+            mode="virtual"
+            renderClone={(provided, snapshot, rubric) => (
+              <div
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                {...provided.droppableProps}
-                isDraggingOver={snapshot.isDraggingOver}
               >
-                <InnerList
-                  urls={urls}
-                  isMinimised={isMinimised}
-                  removeUrlOrDividerAtIndex={urlIndex =>
-                    removeUrlOrDivider(folder.id, urlIndex)
-                  }
-                  {...props}
-                />
-                {provided.placeholder}
-              </UrlList>
+                {UrlItem(
+                  urls[rubric.source.index],
+                  0,
+                  { backgroundColor: 'black' },
+                  () => {}
+                )}
+              </div>
             )}
+          >
+            {(provided, snapshot) => {
+              const itemCount = snapshot.isUsingPlaceholder
+                ? urls.length + 1
+                : urls.length;
+
+              return (
+                <UrlList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                  <List
+                    height={500}
+                    itemCount={itemCount}
+                    itemSize={110}
+                    width={300}
+                    outerRef={provided.innerRef}
+                    itemData={urls}
+                  >
+                    {({ data: urls, index, style }) =>
+                      Row(
+                        urls,
+                        index,
+                        style,
+                        isMinimised,
+                        removeUrlOrDivider,
+                        folder,
+                        props
+                      )
+                    }
+                  </List>
+                </UrlList>
+              );
+            }}
           </Droppable>
         </Container>
       )}
     </Draggable>
+  );
+};
+
+const Row = (
+  urls,
+  index,
+  style,
+  isMinimised,
+  removeUrlOrDivider,
+  folder,
+  props
+) => {
+  const urlObj = urls[index];
+
+  // Rendering an extra item for the placeholder
+  if (!urlObj) {
+    return null;
+  }
+
+  return isMinimised ? (
+    <></>
+  ) : (
+    <UrlOrDivider
+      key={urlObj.id}
+      type={urlObj.type}
+      urlObj={urlObj}
+      index={index}
+      removeUrlOrDividerAtIndex={urlIndex =>
+        removeUrlOrDivider(folder.id, urlIndex)
+      }
+      style={style}
+      {...props}
+    />
   );
 };
 

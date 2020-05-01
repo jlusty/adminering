@@ -24,7 +24,12 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-const DividerSection = ({ urlObj, index, removeUrlOrDividerAtIndex }) => {
+const DividerSection = ({
+  urlObj,
+  index,
+  style,
+  removeUrlOrDividerAtIndex,
+}) => {
   return (
     <Draggable draggableId={urlObj.id} index={index} isDragDisabled={true}>
       {(provided, snapshot) => (
@@ -33,6 +38,7 @@ const DividerSection = ({ urlObj, index, removeUrlOrDividerAtIndex }) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
+          style={style}
         >
           <DividerText>Section #{urlObj.groupNum}</DividerText>
           <Spacer />
