@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import './DraggableUrl.css';
-import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   padding: 8px;
@@ -24,31 +23,10 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-const DividerSection = ({
-  urlObj,
-  index,
-  style,
-  removeUrlOrDividerAtIndex,
-}) => {
-  return (
-    <Draggable draggableId={urlObj.id} index={index} isDragDisabled={true}>
-      {(provided, snapshot) => (
-        <Container
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-          isDragging={snapshot.isDragging}
-          style={style}
-        >
-          <DividerText>Section #{urlObj.groupNum}</DividerText>
-          <Spacer />
-          <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>
-            x
-          </DeleteBtn>
-        </Container>
-      )}
-    </Draggable>
-  );
-};
-
-export default DividerSection;
+export const DividerItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
+  <Container>
+    <DividerText>Section #{urlObj.groupNum}</DividerText>
+    <Spacer />
+    <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>x</DeleteBtn>
+  </Container>
+);

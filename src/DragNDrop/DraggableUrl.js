@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import './DraggableUrl.css';
-import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   border: 1px solid lightgrey;
@@ -34,23 +33,6 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-const DraggableUrl = ({ urlObj, index, style, removeUrlOrDividerAtIndex }) => {
-  return (
-    <Draggable draggableId={urlObj.id} index={index}>
-      {(provided, snapshot) => (
-        <div
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-          style={{ ...provided.draggableProps.style, style }}
-        >
-          {UrlItem(urlObj, index, removeUrlOrDividerAtIndex)}
-        </div>
-      )}
-    </Draggable>
-  );
-};
-
 export const UrlItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
   <Container>
     <FaviconContainer>
@@ -79,5 +61,3 @@ export const UrlItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
     <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>x</DeleteBtn>
   </Container>
 );
-
-export default DraggableUrl;

@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { FixedSizeList } from 'react-window';
-import DraggableUrl, { UrlItem } from './DraggableUrl';
-import DividerSection from './DividerSection';
+import { UrlItem } from './DraggableUrl';
+import { DividerItem } from './DividerSection';
 import { setMinimised, setEditingTitle, changeFolderTitle } from './dndSlice';
 
 const Container = styled.div`
@@ -161,23 +161,26 @@ const Row = ({ data: urls, index, style }) => {
   }
 
   return (
-    <UrlOrDivider
-      key={urlObj.id}
-      type={urlObj.type}
-      urlObj={urlObj}
+    <Draggable
+      draggableId={urlObj.id}
       index={index}
-      removeUrlOrDividerAtIndex={() => {}}
-      style={style}
-    />
+      key={urlObj.id}
+      isDragDisabled={urlObj.type === 'divider'}
+    >
+      {provided => (
+        <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+          style={{ ...provided.draggableProps.style, ...style }}
+        >
+          {urlObj.type === 'divider'
+            ? DividerItem(urlObj, index, () => {})
+            : UrlItem(urlObj, index, () => {})}
+        </div>
+      )}
+    </Draggable>
   );
-};
-
-const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
-  if (type === 'url') {
-    return <DraggableUrl urlObj={urlObj} index={index} {...props} />;
-  } else {
-    return <DividerSection urlObj={urlObj} index={index} {...props} />;
-  }
 };
 
 export default Folder;
