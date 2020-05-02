@@ -1,11 +1,14 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import './DraggableUrl.css';
 
+var urlListPadding = 8;
 export const Container = styled.div`
   border: 1px solid lightgrey;
   border-radius: 5px;
   padding: 8px;
+  margin-right: ${urlListPadding}px;
   height: 52px;
   margin-bottom: 8px;
   background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
@@ -50,8 +53,8 @@ const DeleteBtnContainer = styled.div`
   align-items: center;
 `;
 
-export const UrlItem = (urlObj, urlItemDragState, deleteItem) => (
-  <Container isDragging={urlItemDragState === 'isDragging'}>
+export const UrlItem = (urlObj, isDragging, deleteItem) => (
+  <Container isDragging={isDragging}>
     <FaviconContainer>
       <ImgCentreHelper>
         <img
@@ -76,20 +79,17 @@ export const UrlItem = (urlObj, urlItemDragState, deleteItem) => (
         )}
       </UrlText>
       <Spacer />
-      <DeleteBtn
-        deleteItem={deleteItem}
-        isDragging={
-          urlItemDragState === 'isDragging' ||
-          urlItemDragState === 'isDraggingOver'
-        }
-      />
+      <DeleteBtn deleteItem={deleteItem} />
     </TextCentreHelper>
   </Container>
 );
 
-export const DeleteBtn = ({ deleteItem, isDragging }) =>
-  isDragging ? (
+export const DeleteBtn = ({ deleteItem }) => {
+  const dragHappening = useSelector(state => state.dnd.dragHappening);
+
+  return dragHappening ? (
     <></>
   ) : (
     <DeleteBtnContainer onClick={deleteItem}>✖</DeleteBtnContainer>
   );
+};

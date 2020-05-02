@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
 import FolderList from './FolderList';
-import { setNotMinimised, addFolderToRedux } from './dndSlice';
+import {
+  setNotMinimised,
+  addFolderToRedux,
+  startDrag,
+  endDrag,
+} from './dndSlice';
 
 const WholePageContainer = styled.div`
   height: 100%;
@@ -90,7 +95,12 @@ const DnD = () => {
     setData(newState);
   };
 
+  const onDragStart = () => {
+    dispatch(startDrag());
+  };
+
   const onDragEnd = result => {
+    dispatch(endDrag());
     const { destination, source, draggableId, type } = result;
 
     if (!destination) {
@@ -177,7 +187,7 @@ const DnD = () => {
       >
         Save
       </SaveBtn>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <Container>
           {folderColumnsOrder.map(folderColumnId => {
             const folderColumn = data.folderColumns[folderColumnId];

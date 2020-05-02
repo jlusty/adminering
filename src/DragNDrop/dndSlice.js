@@ -4,7 +4,7 @@ import { addNewFolder } from './DnD';
 
 export const dndSlice = createSlice({
   name: 'dnd',
-  initialState: initialData,
+  initialState: { ...initialData, dragHappening: false },
   reducers: {
     toggleMinimised: (state, action) => {
       state.folders[action.payload].isMinimised = !state.folders[action.payload]
@@ -27,7 +27,12 @@ export const dndSlice = createSlice({
       state.folders[newFolder.id] = newFolder;
       state.folders[newFolder.id].isMinimised = true;
       state = addNewFolder(state, folderColumnId, newFolder);
-      console.log('reduxdone');
+    },
+    startDrag: state => {
+      state.dragHappening = true;
+    },
+    endDrag: state => {
+      state.dragHappening = false;
     },
   },
 });
@@ -38,6 +43,8 @@ export const {
   setEditingTitle,
   changeFolderTitle,
   addFolderToRedux,
+  startDrag,
+  endDrag,
 } = dndSlice.actions;
 
 export default dndSlice.reducer;

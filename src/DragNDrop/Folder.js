@@ -11,6 +11,7 @@ import {
   setEditingTitle,
   changeFolderTitle,
 } from './dndSlice';
+import './customScrollbar.css';
 
 const Container = styled.div`
   margin: 8px;
@@ -85,7 +86,7 @@ const UrlList = styled.div`
       ? '21px;'
       : `calc(100% - ${titleBarHeight + 2 * urlListPadding}px);`}
   min-height: ${titleBarHeight - 2 * urlListPadding}px;
-  padding: ${urlListPadding}px;
+  padding: ${urlListPadding}px 0px ${urlListPadding}px ${urlListPadding}px;
   background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
   flex-grow: 1;
 `;
@@ -172,7 +173,7 @@ const ItemList = React.memo(
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          {UrlItem(urls[rubric.source.index], 'isDragging', () => {})}
+          {UrlItem(urls[rubric.source.index], true, () => {})}
         </div>
       )}
     >
@@ -195,6 +196,7 @@ const ItemList = React.memo(
               {({ width, height }) => {
                 return (
                   <FixedSizeList
+                    className="customScrollbar"
                     width={width}
                     height={height}
                     itemCount={itemCount}
@@ -203,7 +205,6 @@ const ItemList = React.memo(
                       urls,
                       deleteItemAtIndex: index =>
                         removeUrlOrDivider(folder.id, index),
-                      isDraggingOver: snapshot.isDraggingOver,
                     }}
                   >
                     {ItemRenderer}
@@ -219,7 +220,7 @@ const ItemList = React.memo(
 );
 
 const ItemRenderer = React.memo(({ data, index, style }) => {
-  const { urls, deleteItemAtIndex, isDraggingOver } = data;
+  const { urls, deleteItemAtIndex } = data;
   const deleteItem = () => deleteItemAtIndex(index);
   const urlObj = urls[index];
 
@@ -246,16 +247,8 @@ const ItemRenderer = React.memo(({ data, index, style }) => {
           }}
         >
           {urlObj.type === 'divider'
-            ? DividerItem(
-                urlObj,
-                isDraggingOver ? 'isDraggingOver' : 'none',
-                deleteItem
-              )
-            : UrlItem(
-                urlObj,
-                isDraggingOver ? 'isDraggingOver' : 'none',
-                deleteItem
-              )}
+            ? DividerItem(urlObj, deleteItem)
+            : UrlItem(urlObj, false, deleteItem)}
         </div>
       )}
     </Draggable>

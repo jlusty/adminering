@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import Folder from './Folder';
+import './customScrollbar.css';
 
 const scrollBarWidth = 17;
 const Container = styled.div`
@@ -79,6 +80,7 @@ const FolderList = ({
             ref={provided.innerRef}
             direction={folderColumn.direction}
             isDraggingOver={snapshot.isDraggingOver}
+            className="customScrollbar"
           >
             {folders.map((folder, index) => {
               return (

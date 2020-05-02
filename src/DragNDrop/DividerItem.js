@@ -18,15 +18,12 @@ const DividerText = styled(UrlText)`
   font-size: 14px;
 `;
 
-export const DividerItem = (urlObj, dividerItemDragState, deleteItem) => (
+export const DividerItem = (urlObj, deleteItem) => (
   <DividerContainer>
     <TextCentreHelper>
       <DividerText>Section #{urlObj.groupNum}</DividerText>
       <Spacer />
-      <DeleteBtn
-        deleteItem={deleteItem}
-        isDragging={dividerItemDragState === 'isDraggingOver'}
-      />
+      <DeleteBtn deleteItem={deleteItem} />
     </TextCentreHelper>
   </DividerContainer>
 );
