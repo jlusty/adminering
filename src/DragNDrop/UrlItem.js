@@ -4,7 +4,7 @@ import './DraggableUrl.css';
 
 export const Container = styled.div`
   border: 1px solid lightgrey;
-  border-radius: 2px;
+  border-radius: 5px;
   padding: 8px;
   height: 52px;
   margin-bottom: 8px;
@@ -22,10 +22,11 @@ const ImgCentreHelper = styled.div`
   width: 20px;
 `;
 const deleteBtnWidth = 10;
+const deleteBtnBorderWidth = 3;
 export const UrlText = styled.p`
   margin: 0px;
   font-size: 12px;
-  width: calc(100% - ${deleteBtnWidth}px);
+  width: calc(100% - ${deleteBtnWidth + 2 * deleteBtnBorderWidth + 3}px);
 `;
 export const TextCentreHelper = styled.div`
   height: 100%;
@@ -40,7 +41,7 @@ export const Spacer = styled.div`
 const DeleteBtnContainer = styled.div`
   height: 10px;
   width: ${deleteBtnWidth}px;
-  border: 3px solid lightgrey;
+  border: ${deleteBtnBorderWidth}px solid lightgrey;
   border-radius: 25%;
   font-size: 11px;
   cursor: pointer;

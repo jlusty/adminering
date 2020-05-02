@@ -27,20 +27,25 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 const titleBarHeight = 37;
+const btnBoxWidth = 70;
 const TitleBar = styled.div`
   height: ${titleBarHeight}px;
   flex-grow: 1;
+  ${props =>
+    props.isEditingTitle ? `max-width: calc(100% - ${btnBoxWidth}px);` : ''};
 `;
 const TitleText = styled.h3`
   margin: 0px;
   padding: 8px;
 `;
+const titleInputPadding = 8;
 const TitleInput = styled.input`
   margin: 0px;
-  padding: 8px;
+  padding: ${titleInputPadding}px;
+  width: 100%;
 `;
 const BtnBox = styled.div`
-  width: 70px;
+  width: ${btnBoxWidth}px;
   height: ${titleBarHeight}px;
   display: flex;
   flex-direction: row;
@@ -49,14 +54,28 @@ const MinimiseBtn = styled.div`
   height: 25px;
   width: 25px;
   border-radius: 50%;
-  border: 5px solid white;
-  background-color: ${props => (props.isMinimised ? 'pink' : 'lightgrey')};
+  border: 5px solid ${props => (props.isDragging ? 'inherit' : 'white')};
+  background-color: ${props => {
+    if (props.isDragging) {
+      return 'inherit';
+    } else if (props.isMinimised) {
+      return 'pink';
+    }
+    return 'lightgrey';
+  }};
 `;
 const EditBtn = styled.div`
   height: 25px;
   width: 25px;
-  border: 5px solid white;
-  background-color: ${props => (props.isEditingTitle ? 'purple' : 'lightgrey')};
+  border: 5px solid ${props => (props.isDragging ? 'inherit' : 'white')};
+  background-color: ${props => {
+    if (props.isDragging) {
+      return 'inherit';
+    } else if (props.isMinimised) {
+      return 'purple';
+    }
+    return 'lightgrey';
+  }};
 `;
 const urlListPadding = 8;
 const UrlList = styled.div`
@@ -111,17 +130,22 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
           isDragging={snapshot.isDragging}
           isMinimised={isMinimised}
         >
-          <TitleBar {...provided.dragHandleProps}>
+          <TitleBar
+            {...provided.dragHandleProps}
+            isEditingTitle={isEditingTitle}
+          >
             <Title folderId={folder.id} isEditingTitle={isEditingTitle} />
           </TitleBar>
           <BtnBox>
             <EditBtn
               onClick={() => dispatch(setEditingTitle(folder.id))}
               isEditingTitle={isEditingTitle}
+              isDragging={snapshot.isDragging}
             />
             <MinimiseBtn
               onClick={() => dispatch(toggleMinimised(folder.id))}
               isMinimised={isMinimised}
+              isDragging={snapshot.isDragging}
             />
           </BtnBox>
           <ItemList
