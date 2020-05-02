@@ -19,12 +19,12 @@ const Container = styled.div`
   width: 300px;
 
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
 `;
 const TitleBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-grow: 1;
 `;
 const TitleText = styled.h3`
   margin: 0px;
@@ -101,17 +101,17 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
         >
           <TitleBar {...provided.dragHandleProps}>
             <Title folderId={folder.id} isEditingTitle={isEditingTitle} />
-            <BtnBox>
-              <EditBtn
-                onClick={() => dispatch(setEditingTitle(folder.id))}
-                isEditingTitle={isEditingTitle}
-              />
-              <MinimiseBtn
-                onClick={() => dispatch(toggleMinimised(folder.id))}
-                isMinimised={isMinimised}
-              />
-            </BtnBox>
           </TitleBar>
+          <BtnBox>
+            <EditBtn
+              onClick={() => dispatch(setEditingTitle(folder.id))}
+              isEditingTitle={isEditingTitle}
+            />
+            <MinimiseBtn
+              onClick={() => dispatch(toggleMinimised(folder.id))}
+              isMinimised={isMinimised}
+            />
+          </BtnBox>
           <ItemList
             isMinimised={isMinimised}
             folder={folder}
