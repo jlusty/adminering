@@ -42,17 +42,17 @@ const DraggableUrl = ({ urlObj, index, style, removeUrlOrDividerAtIndex }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          isDragging={snapshot.isDragging}
+          style={{ ...provided.draggableProps.style, style }}
         >
-          {UrlItem(urlObj, index, style, removeUrlOrDividerAtIndex)}
+          {UrlItem(urlObj, index, removeUrlOrDividerAtIndex)}
         </div>
       )}
     </Draggable>
   );
 };
 
-export const UrlItem = (urlObj, index, style, removeUrlOrDividerAtIndex) => (
-  <Container style={style}>
+export const UrlItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
+  <Container>
     <FaviconContainer>
       <ImgCentreHelper>
         <img

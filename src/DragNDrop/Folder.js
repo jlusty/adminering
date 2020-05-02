@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import DraggableUrl, { UrlItem } from './DraggableUrl';
 import DividerSection from './DividerSection';
 import { setMinimised, setEditingTitle, changeFolderTitle } from './dndSlice';
@@ -55,14 +55,6 @@ const UrlList = styled.div`
   flex-grow: 1;
   min-height: 30px;
 `;
-
-const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
-  if (type === 'url') {
-    return <DraggableUrl urlObj={urlObj} index={index} {...props} />;
-  } else {
-    return <DividerSection urlObj={urlObj} index={index} {...props} />;
-  }
-};
 
 const Title = ({ folderId, isEditingTitle }) => {
   const dispatch = useDispatch();
@@ -129,12 +121,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
               >
-                {UrlItem(
-                  urls[rubric.source.index],
-                  0,
-                  { backgroundColor: 'black' },
-                  () => {}
-                )}
+                {UrlItem(urls[rubric.source.index], 0, () => {})}
               </div>
             )}
           >
@@ -144,21 +131,17 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
                 : urls.length;
 
               return (
-                <UrlList
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  isDraggingOver={snapshot.isDraggingOver}
-                >
-                  <List
+                <UrlList isDraggingOver={snapshot.isDraggingOver}>
+                  <FixedSizeList
                     height={500}
                     itemCount={itemCount}
-                    itemSize={110}
-                    width={300}
+                    itemSize={100}
+                    width={250}
                     outerRef={provided.innerRef}
                     itemData={urls}
                   >
                     {Row}
-                  </List>
+                  </FixedSizeList>
                 </UrlList>
               );
             }}
@@ -187,6 +170,14 @@ const Row = ({ data: urls, index, style }) => {
       style={style}
     />
   );
+};
+
+const UrlOrDivider = ({ type, urlObj, index, ...props }) => {
+  if (type === 'url') {
+    return <DraggableUrl urlObj={urlObj} index={index} {...props} />;
+  } else {
+    return <DividerSection urlObj={urlObj} index={index} {...props} />;
+  }
 };
 
 export default Folder;
