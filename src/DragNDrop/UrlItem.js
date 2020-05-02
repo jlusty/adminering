@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import './DraggableUrl.css';
 
-const Container = styled.div`
+export const Container = styled.div`
   border: 1px solid lightgrey;
   border-radius: 2px;
   padding: 8px;
+  height: 52px;
   margin-bottom: 8px;
   background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
 
@@ -20,21 +21,36 @@ const ImgCentreHelper = styled.div`
   height: 100%;
   width: 20px;
 `;
-const UrlText = styled.p`
+const deleteBtnWidth = 10;
+export const UrlText = styled.p`
   margin: 0px;
   font-size: 12px;
+  width: calc(100% - ${deleteBtnWidth}px);
 `;
-const Spacer = styled.div`
+export const TextCentreHelper = styled.div`
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+`;
+export const Spacer = styled.div`
   flex-grow: 1;
 `;
-const DeleteBtn = styled.div`
+const DeleteBtnContainer = styled.div`
   height: 10px;
-  width: 10px;
-  border: 5px solid lightgrey;
+  width: ${deleteBtnWidth}px;
+  border: 3px solid lightgrey;
+  border-radius: 25%;
+  font-size: 11px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
 `;
 
-export const UrlItem = (urlObj, deleteItem) => (
-  <Container>
+export const UrlItem = (urlObj, urlItemDragState, deleteItem) => (
+  <Container isDragging={urlItemDragState === 'isDragging'}>
     <FaviconContainer>
       <ImgCentreHelper>
         <img
@@ -46,18 +62,33 @@ export const UrlItem = (urlObj, deleteItem) => (
         />
       </ImgCentreHelper>
     </FaviconContainer>
-    <UrlText>
-      <a href={urlObj.url}>{urlObj.description}</a>
-      {urlObj.siteName ? (
-        <>
-          <br />
-          {urlObj.siteName}
-        </>
-      ) : (
-        <></>
-      )}
-    </UrlText>
-    <Spacer />
-    <DeleteBtn onClick={deleteItem}>x</DeleteBtn>
+    <TextCentreHelper>
+      <UrlText>
+        <a href={urlObj.url}>{urlObj.description}</a>
+        {urlObj.siteName ? (
+          <>
+            <br />
+            {urlObj.siteName}
+          </>
+        ) : (
+          <></>
+        )}
+      </UrlText>
+      <Spacer />
+      <DeleteBtn
+        deleteItem={deleteItem}
+        isDragging={
+          urlItemDragState === 'isDragging' ||
+          urlItemDragState === 'isDraggingOver'
+        }
+      />
+    </TextCentreHelper>
   </Container>
 );
+
+export const DeleteBtn = ({ deleteItem, isDragging }) =>
+  isDragging ? (
+    <></>
+  ) : (
+    <DeleteBtnContainer onClick={deleteItem}>✖</DeleteBtnContainer>
+  );

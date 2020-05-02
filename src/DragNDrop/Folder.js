@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { FixedSizeList, areEqual } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { UrlItem } from './UrlItem';
 import { DividerItem } from './DividerItem';
 import {
@@ -17,13 +18,17 @@ const Container = styled.div`
   background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
   border-radius: 2px;
   width: 300px;
+  ${props => (props.isMinimised ? `height: ${titleBarHeight * 2}px;` : '')}
+  flex-grow: ${props => (props.isMinimised ? '0' : '1')};
 
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
 `;
+const titleBarHeight = 37;
 const TitleBar = styled.div`
+  height: ${titleBarHeight}px;
   flex-grow: 1;
 `;
 const TitleText = styled.h3`
@@ -31,9 +36,14 @@ const TitleText = styled.h3`
   padding: 8px;
 `;
 const TitleInput = styled.input`
-  width: 200px;
   margin: 0px;
   padding: 8px;
+`;
+const BtnBox = styled.div`
+  width: 70px;
+  height: ${titleBarHeight}px;
+  display: flex;
+  flex-direction: row;
 `;
 const MinimiseBtn = styled.div`
   height: 25px;
@@ -48,16 +58,17 @@ const EditBtn = styled.div`
   border: 5px solid white;
   background-color: ${props => (props.isEditingTitle ? 'purple' : 'lightgrey')};
 `;
-const BtnBox = styled.div`
-  width: 70px;
-  display: flex;
-  flex-direction: row;
-`;
+const urlListPadding = 8;
 const UrlList = styled.div`
-  padding: 8px;
+  width: 100%;
+  height: ${props =>
+    props.isMinimised
+      ? '21px;'
+      : `calc(100% - ${titleBarHeight + 2 * urlListPadding}px);`}
+  min-height: ${titleBarHeight - 2 * urlListPadding}px;
+  padding: ${urlListPadding}px;
   background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
   flex-grow: 1;
-  min-height: 30px;
 `;
 
 const Title = ({ folderId, isEditingTitle }) => {
@@ -98,6 +109,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
           {...provided.draggableProps}
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
+          isMinimised={isMinimised}
         >
           <TitleBar {...provided.dragHandleProps}>
             <Title folderId={folder.id} isEditingTitle={isEditingTitle} />
@@ -136,37 +148,45 @@ const ItemList = React.memo(
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          {UrlItem(urls[rubric.source.index], () => {})}
+          {UrlItem(urls[rubric.source.index], 'isDragging', () => {})}
         </div>
       )}
     >
       {(provided, snapshot) => {
-        let height = 500;
         let itemCount = snapshot.isUsingPlaceholder
           ? urls.length + 1
           : urls.length;
 
         if (isMinimised) {
-          height = 50;
           itemCount = 0;
         }
 
         return (
-          <UrlList isDraggingOver={snapshot.isDraggingOver}>
-            <FixedSizeList
-              height={height}
-              itemCount={itemCount}
-              itemSize={100}
-              width={250}
-              outerRef={provided.innerRef}
-              itemData={{
-                urls,
-                deleteItemAtIndex: index =>
-                  removeUrlOrDivider(folder.id, index),
+          <UrlList
+            isDraggingOver={snapshot.isDraggingOver}
+            isMinimised={isMinimised}
+            ref={provided.innerRef}
+          >
+            <AutoSizer>
+              {({ width, height }) => {
+                return (
+                  <FixedSizeList
+                    width={width}
+                    height={height}
+                    itemCount={itemCount}
+                    itemSize={78}
+                    itemData={{
+                      urls,
+                      deleteItemAtIndex: index =>
+                        removeUrlOrDivider(folder.id, index),
+                      isDraggingOver: snapshot.isDraggingOver,
+                    }}
+                  >
+                    {ItemRenderer}
+                  </FixedSizeList>
+                );
               }}
-            >
-              {ItemRenderer}
-            </FixedSizeList>
+            </AutoSizer>
           </UrlList>
         );
       }}
@@ -175,7 +195,7 @@ const ItemList = React.memo(
 );
 
 const ItemRenderer = React.memo(({ data, index, style }) => {
-  const { urls, deleteItemAtIndex } = data;
+  const { urls, deleteItemAtIndex, isDraggingOver } = data;
   const deleteItem = () => deleteItemAtIndex(index);
   const urlObj = urls[index];
 
@@ -191,7 +211,7 @@ const ItemRenderer = React.memo(({ data, index, style }) => {
       key={urlObj.id}
       isDragDisabled={urlObj.type === 'divider'}
     >
-      {provided => (
+      {(provided, snapshot) => (
         <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -202,8 +222,16 @@ const ItemRenderer = React.memo(({ data, index, style }) => {
           }}
         >
           {urlObj.type === 'divider'
-            ? DividerItem(urlObj, deleteItem)
-            : UrlItem(urlObj, deleteItem)}
+            ? DividerItem(
+                urlObj,
+                isDraggingOver ? 'isDraggingOver' : 'none',
+                deleteItem
+              )
+            : UrlItem(
+                urlObj,
+                isDraggingOver ? 'isDraggingOver' : 'none',
+                deleteItem
+              )}
         </div>
       )}
     </Draggable>

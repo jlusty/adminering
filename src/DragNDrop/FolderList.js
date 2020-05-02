@@ -3,19 +3,25 @@ import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import Folder from './Folder';
 
+const scrollBarWidth = 17;
 const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgrey;
   background-color: white;
   border-radius: 2px;
-  height: 70vh;
-  min-width: 318px;
+  height: 100%;
+  min-width: calc(318px + ${scrollBarWidth}px);
+
+  display: flex;
+  flex-direction: column;
 `;
 const InnerContainer = styled.div`
   background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
   border-radius: 2px;
   width: 100%;
-  min-height: 100px;
+  height: 500px;
+  flex-grow: 1;
+  overflow: auto;
 
   display: flex;
   flex-direction: ${props =>

@@ -6,7 +6,14 @@ import initialData from './initial-data';
 import FolderList from './FolderList';
 import { setNotMinimised, addFolderToRedux } from './dndSlice';
 
+const WholePageContainer = styled.div`
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+`;
 const Container = styled.div`
+  height: 100%;
   margin: 20px 20px;
 
   display: flex;
@@ -162,7 +169,7 @@ const DnD = () => {
   const { folderColumnsOrder } = data;
 
   return (
-    <>
+    <WholePageContainer>
       <SaveBtn
         onClick={() => {
           saveState(data);
@@ -187,7 +194,7 @@ const DnD = () => {
           })}
         </Container>
       </DragDropContext>
-    </>
+    </WholePageContainer>
   );
 };
 
