@@ -23,10 +23,10 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-export const DividerItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
+export const DividerItem = (urlObj, deleteItem) => (
   <Container>
     <DividerText>Section #{urlObj.groupNum}</DividerText>
     <Spacer />
-    <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>x</DeleteBtn>
+    <DeleteBtn onClick={deleteItem}>x</DeleteBtn>
   </Container>
 );

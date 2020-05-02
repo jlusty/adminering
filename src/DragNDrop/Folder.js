@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { FixedSizeList } from 'react-window';
-import { UrlItem } from './DraggableUrl';
-import { DividerItem } from './DividerSection';
+import { UrlItem } from './UrlItem';
+import { DividerItem } from './DividerItem';
 import { setMinimised, setEditingTitle, changeFolderTitle } from './dndSlice';
 
 const Container = styled.div`
@@ -121,7 +121,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
               >
-                {UrlItem(urls[rubric.source.index], 0, () => {})}
+                {UrlItem(urls[rubric.source.index], () => {})}
               </div>
             )}
           >
@@ -138,9 +138,13 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
                     itemSize={100}
                     width={250}
                     outerRef={provided.innerRef}
-                    itemData={urls}
+                    itemData={{
+                      urls,
+                      deleteItemAtIndex: index =>
+                        removeUrlOrDivider(folder.id, index),
+                    }}
                   >
-                    {Row}
+                    {ItemRenderer}
                   </FixedSizeList>
                 </UrlList>
               );
@@ -152,7 +156,9 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
   );
 };
 
-const Row = ({ data: urls, index, style }) => {
+const ItemRenderer = ({ data, index, style }) => {
+  const { urls, deleteItemAtIndex } = data;
+  const deleteItem = () => deleteItemAtIndex(index);
   const urlObj = urls[index];
 
   // Rendering an extra item for the placeholder
@@ -172,11 +178,14 @@ const Row = ({ data: urls, index, style }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          style={{ ...provided.draggableProps.style, ...style }}
+          style={{
+            ...provided.draggableProps.style,
+            ...style,
+          }}
         >
           {urlObj.type === 'divider'
-            ? DividerItem(urlObj, index, () => {})
-            : UrlItem(urlObj, index, () => {})}
+            ? DividerItem(urlObj, deleteItem)
+            : UrlItem(urlObj, deleteItem)}
         </div>
       )}
     </Draggable>

@@ -33,7 +33,7 @@ const DeleteBtn = styled.div`
   border: 5px solid lightgrey;
 `;
 
-export const UrlItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
+export const UrlItem = (urlObj, deleteItem) => (
   <Container>
     <FaviconContainer>
       <ImgCentreHelper>
@@ -58,6 +58,6 @@ export const UrlItem = (urlObj, index, removeUrlOrDividerAtIndex) => (
       )}
     </UrlText>
     <Spacer />
-    <DeleteBtn onClick={() => removeUrlOrDividerAtIndex(index)}>x</DeleteBtn>
+    <DeleteBtn onClick={deleteItem}>x</DeleteBtn>
   </Container>
 );
