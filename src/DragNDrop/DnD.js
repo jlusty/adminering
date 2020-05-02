@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
 import FolderList from './FolderList';
-import { setNotMinimised } from './dndSlice';
+import { setNotMinimised, addFolderToRedux } from './dndSlice';
 
 const Container = styled.div`
   margin: 20px 20px;
@@ -12,7 +12,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-
 const SaveBtn = styled.div`
   margin-left: 50px;
   padding: 10px 20px;
@@ -20,6 +19,33 @@ const SaveBtn = styled.div`
   width: 60px;
   height: 30px;
 `;
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+export function addNewFolder(data, folderColumnId, newFolder) {
+  const newFolderIds = Array.from(data.folderColumns[folderColumnId].folderIds);
+  newFolderIds.push(newFolder.id);
+
+  const newFolderColumn = {
+    ...data.folderColumns[folderColumnId],
+    folderIds: newFolderIds,
+  };
+
+  return {
+    ...data,
+    folders: { ...data.folders, [newFolder.id]: newFolder },
+    folderColumns: {
+      ...data.folderColumns,
+      [folderColumnId]: newFolderColumn,
+    },
+  };
+}
 
 const DnD = () => {
   const dispatch = useDispatch();
@@ -47,6 +73,13 @@ const DnD = () => {
       urls: newUrls,
       folders: { ...data.folders, [folderId]: newFolder },
     };
+    setData(newState);
+  };
+
+  const addFolder = folderColumnId => {
+    const newFolder = { id: uuidv4(), title: 'New folder', urlIds: [] };
+    dispatch(addFolderToRedux({ folderColumnId, newFolder }));
+    const newState = addNewFolder(data, folderColumnId, newFolder);
     setData(newState);
   };
 
@@ -148,6 +181,7 @@ const DnD = () => {
                 allFolders={data.folders}
                 allUrls={data.urls}
                 removeUrlOrDivider={removeUrlOrDivider}
+                addFolder={addFolder}
               />
             );
           })}

@@ -6,13 +6,11 @@ import * as serviceWorker from './serviceWorker';
 import store from './store/store';
 import { Provider } from 'react-redux';
 import DnD from './DragNDrop/DnD';
-import { Counter } from './features/counter/Counter';
 import { Example } from './YouTube/YouTube';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Counter />
       <DnD />
     </Provider>
   </React.StrictMode>,

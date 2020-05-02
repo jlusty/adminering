@@ -21,9 +21,25 @@ const InnerContainer = styled.div`
   flex-direction: ${props =>
     props.direction === 'horizontal' ? 'row' : 'column'};
 `;
+const TitleBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 const Title = styled.h3`
   margin: 0px;
   padding: 8px;
+`;
+const BtnBox = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const AddBtn = styled.div`
+  height: 25px;
+  width: 25px;
+  border-radius: 25%;
+  border: 5px solid white;
+  background-color: lightgrey;
 `;
 
 const InnerList = React.memo(({ folder, urlMap, index, ...props }) => {
@@ -31,10 +47,21 @@ const InnerList = React.memo(({ folder, urlMap, index, ...props }) => {
   return <Folder folder={folder} urls={urls} index={index} {...props} />;
 });
 
-const FolderList = ({ folderColumn, folders, allUrls, ...props }) => {
+const FolderList = ({
+  folderColumn,
+  folders,
+  allUrls,
+  addFolder,
+  ...props
+}) => {
   return (
     <Container>
-      <Title>{folderColumn.id}</Title>
+      <TitleBar>
+        <Title>{folderColumn.id}</Title>
+        <BtnBox>
+          <AddBtn onClick={() => addFolder(folderColumn.id)} />
+        </BtnBox>
+      </TitleBar>
       <Droppable
         droppableId={folderColumn.id}
         direction={folderColumn.direction}

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import initialData from './initial-data';
+import { addNewFolder } from './DnD';
 
 export const dndSlice = createSlice({
   name: 'dnd',
@@ -21,6 +22,13 @@ export const dndSlice = createSlice({
         action.payload
       ].isEditingTitle;
     },
+    addFolderToRedux: (state, action) => {
+      const { folderColumnId, newFolder } = action.payload;
+      state.folders[newFolder.id] = newFolder;
+      state.folders[newFolder.id].isMinimised = true;
+      state = addNewFolder(state, folderColumnId, newFolder);
+      console.log('reduxdone');
+    },
   },
 });
 
@@ -29,6 +37,7 @@ export const {
   setNotMinimised,
   setEditingTitle,
   changeFolderTitle,
+  addFolderToRedux,
 } = dndSlice.actions;
 
 export default dndSlice.reducer;
