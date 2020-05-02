@@ -5,9 +5,12 @@ export const dndSlice = createSlice({
   name: 'dnd',
   initialState: initialData,
   reducers: {
-    setMinimised: (state, action) => {
+    toggleMinimised: (state, action) => {
       state.folders[action.payload].isMinimised = !state.folders[action.payload]
         .isMinimised;
+    },
+    setNotMinimised: (state, action) => {
+      state.folders[action.payload].isMinimised = false;
     },
     changeFolderTitle: (state, action) => {
       const { folderId, newTitle } = action.payload;
@@ -22,7 +25,8 @@ export const dndSlice = createSlice({
 });
 
 export const {
-  setMinimised,
+  toggleMinimised,
+  setNotMinimised,
   setEditingTitle,
   changeFolderTitle,
 } = dndSlice.actions;

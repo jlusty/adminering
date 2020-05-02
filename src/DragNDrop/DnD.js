@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import initialData from './initial-data';
 import FolderList from './FolderList';
+import { setNotMinimised } from './dndSlice';
 
 const Container = styled.div`
   margin: 20px 20px;
@@ -20,6 +22,7 @@ const SaveBtn = styled.div`
 `;
 
 const DnD = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState(initialData);
 
   useEffect(() => {
@@ -108,6 +111,11 @@ const DnD = () => {
       };
 
       setData(newState);
+
+      // If drop into a minimised folder, expand it
+      if (type === 'url') {
+        dispatch(setNotMinimised(destination.droppableId));
+      }
       return;
     }
 
