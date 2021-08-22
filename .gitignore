@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Don't commit initial data
+src/DragNDrop/initial-data.js
