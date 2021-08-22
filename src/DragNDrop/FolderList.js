@@ -20,9 +20,9 @@ const InnerContainer = styled.div`
   background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
   border-radius: 2px;
   width: 100%;
-  height: 500px;
+  height: 100px;
   flex-grow: 1;
-  overflow: auto;
+  ${props => (props.direction === 'horizontal' ? '' : 'overflow: auto;')}
 
   display: flex;
   flex-direction: ${props =>
@@ -49,10 +49,20 @@ const AddBtn = styled.div`
   background-color: lightgrey;
 `;
 
-const InnerList = React.memo(({ folder, urlMap, index, ...props }) => {
-  const urls = folder.urlIds.map(urlId => urlMap[urlId]);
-  return <Folder folder={folder} urls={urls} index={index} {...props} />;
-});
+const InnerList = React.memo(
+  ({ folder, urlMap, index, parentDirection, ...props }) => {
+    const urls = folder.urlIds.map(urlId => urlMap[urlId]);
+    return (
+      <Folder
+        folder={folder}
+        urls={urls}
+        index={index}
+        parentDirection={parentDirection}
+        {...props}
+      />
+    );
+  }
+);
 
 const FolderList = ({
   folderColumn,
@@ -89,6 +99,7 @@ const FolderList = ({
                   folder={folder}
                   urlMap={allUrls}
                   index={index}
+                  parentDirection={folderColumn.direction}
                   {...props}
                 />
               );

@@ -6,6 +6,7 @@ import initialData from './initial-data';
 import FolderList from './FolderList';
 import {
   setNotMinimised,
+  setMinimised,
   addFolderToRedux,
   startDrag,
   endDrag,
@@ -100,6 +101,7 @@ const DnD = () => {
   };
 
   const onDragEnd = result => {
+    saveState(data);
     dispatch(endDrag());
     const { destination, source, draggableId, type } = result;
 
@@ -163,7 +165,12 @@ const DnD = () => {
       setData(newState);
 
       // If drop into a minimised folder, expand it
-      if (type === 'url') {
+      if (
+        type === 'url' &&
+        !data.folderColumns['folder-column-1'].folderIds.includes(
+          destination.droppableId
+        )
+      ) {
         dispatch(setNotMinimised(destination.droppableId));
       }
       return;
@@ -171,6 +178,9 @@ const DnD = () => {
 
     if (type === 'folder') {
       moveItem('folderColumns', 'folderIds');
+      if (destination.droppableId === 'folder-column-1') {
+        dispatch(setMinimised(draggableId));
+      }
       return;
     }
     moveItem('folders', 'urlIds');
@@ -226,6 +236,7 @@ const InnerList = React.memo(
 
 const saveState = data => {
   localStorage.setItem('current-data', JSON.stringify(data));
+  console.log(JSON.stringify(data, null, 2));
 };
 
 export default DnD;

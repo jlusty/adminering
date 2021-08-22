@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { FixedSizeList, areEqual } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { UrlItem } from './UrlItem';
 import { DividerItem } from './DividerItem';
 import {
@@ -113,7 +112,13 @@ const Title = ({ folderId, isEditingTitle }) => {
   );
 };
 
-const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
+const Folder = ({
+  folder,
+  urls,
+  index,
+  removeUrlOrDivider,
+  parentDirection,
+}) => {
   const isMinimised = useSelector(
     state => state.dnd.folders[folder.id].isMinimised
   );
@@ -144,7 +149,11 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
               isDragging={snapshot.isDragging}
             />
             <MinimiseBtn
-              onClick={() => dispatch(toggleMinimised(folder.id))}
+              onClick={() =>
+                dispatch(
+                  toggleMinimised({ folderId: folder.id, parentDirection })
+                )
+              }
               isMinimised={isMinimised}
               isDragging={snapshot.isDragging}
             />
@@ -154,6 +163,7 @@ const Folder = ({ folder, urls, index, removeUrlOrDivider, ...props }) => {
             folder={folder}
             urls={urls}
             removeUrlOrDivider={removeUrlOrDivider}
+            parentDirection={parentDirection}
           />
         </Container>
       )}
@@ -181,37 +191,33 @@ const ItemList = React.memo(
         let itemCount = snapshot.isUsingPlaceholder
           ? urls.length + 1
           : urls.length;
+        let height = 742;
 
         if (isMinimised) {
           itemCount = 0;
+          height = 29;
         }
 
         return (
           <UrlList
             isDraggingOver={snapshot.isDraggingOver}
             isMinimised={isMinimised}
-            ref={provided.innerRef}
           >
-            <AutoSizer>
-              {({ width, height }) => {
-                return (
-                  <FixedSizeList
-                    className="customScrollbar"
-                    width={width}
-                    height={height}
-                    itemCount={itemCount}
-                    itemSize={78}
-                    itemData={{
-                      urls,
-                      deleteItemAtIndex: index =>
-                        removeUrlOrDivider(folder.id, index),
-                    }}
-                  >
-                    {ItemRenderer}
-                  </FixedSizeList>
-                );
+            <FixedSizeList
+              className="customScrollbar"
+              width={292}
+              height={height}
+              itemCount={itemCount}
+              itemSize={78}
+              outerRef={provided.innerRef}
+              itemData={{
+                urls,
+                deleteItemAtIndex: index =>
+                  removeUrlOrDivider(folder.id, index),
               }}
-            </AutoSizer>
+            >
+              {ItemRenderer}
+            </FixedSizeList>
           </UrlList>
         );
       }}
